@@ -51,6 +51,7 @@ Successful response:
 {
     id: string
     created: Date
+    lastUsed: Date
     scraper: string
 }
 ```

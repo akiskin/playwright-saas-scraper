@@ -25,11 +25,13 @@ const addRoutes = (app: express.Application): void => {
         const logger = new Logger();
         scraper.enableLogger(logger);
 
+        const now = new Date();
         const processingContext: Context = {
             id: crypto.randomUUID(),
             contextRef: context,
             pageRef: page,
-            created: new Date(),
+            created: now,
+            lastUsed: now,
             scraper: req.body.target,
             logger: logger
         };
@@ -69,6 +71,8 @@ const addRoutes = (app: express.Application): void => {
         scraper.enableLogger(context.logger);
         scraper.setContext(context);
 
+        context.lastUsed = new Date();
+
         const accounts = await scraper.extractAccounts({});
 
         res.send(accounts);
@@ -88,6 +92,8 @@ const addRoutes = (app: express.Application): void => {
         const scraper = await loadScraperRuntime(context.scraper);
         scraper.enableLogger(context.logger);
         scraper.setContext(context);
+
+        context.lastUsed = new Date();
 
         await scraper.logout({});
 

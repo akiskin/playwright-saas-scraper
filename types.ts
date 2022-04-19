@@ -6,6 +6,7 @@ export interface Context {
     contextRef: BrowserContext
     pageRef: Page
     created: Date
+    lastUsed: Date
     scraper: string
     logger: Logger
   }

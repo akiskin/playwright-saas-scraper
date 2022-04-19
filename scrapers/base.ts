@@ -1,5 +1,5 @@
 import { BrowserContext, Page } from "playwright";
-import Logger, { ENTRY_TYPE } from "../logger";
+import Logger, { ENTRY_TYPE, LogEntryDataType } from "../logger";
 import { Scraper } from './generic';
 import { Context } from '../types';
 
@@ -39,7 +39,7 @@ class BaseScraper implements Scraper {
         this.#logger = logger
     }
 
-    log(text: string, data: any, type: string = ENTRY_TYPE.TEXT) {
+    log(text: string, data: any, type: LogEntryDataType = ENTRY_TYPE.TEXT) {
         if (!this.#logger) {
             return;
         }

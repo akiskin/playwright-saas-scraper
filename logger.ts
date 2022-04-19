@@ -1,14 +1,14 @@
 
-type LogEntryDataType = "text"|"image/png"
+export type LogEntryDataType = "text"|"image/png"
 
-interface LogEntry {
+export interface LogEntry {
     created: Date
     text: string
     data: string
     type: LogEntryDataType
 }
 
-export const ENTRY_TYPE = {
+export const ENTRY_TYPE: {[n: string]: LogEntryDataType} = {
     TEXT: "text",
     PNG: "image/png"
 }

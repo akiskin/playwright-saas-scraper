@@ -5,11 +5,12 @@ const PREFIX = '/control'
 const addRoutes = (app: express.Application): void => {
 
     app.get(PREFIX + '/contexts', async (req,res) => {
-        res.json(global.availableContexts.map(gc => {
-            gc.id,
-            gc.created
-            gc.scraper}
-        ));
+        res.json(global.availableContexts.map(gc => { return {
+            id: gc.id,
+            created: gc.created,
+            lastUsed: gc.lastUsed,
+            scraper: gc.scraper}
+        }));
     });
 
     app.get(PREFIX + '/log', async (req,res) => {
