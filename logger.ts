@@ -1,8 +1,11 @@
+
+type LogEntryDataType = "text"|"image/png"
+
 interface LogEntry {
     created: Date
     text: string
     data: string
-    type: "text"|"image/png"
+    type: LogEntryDataType
 }
 
 export const ENTRY_TYPE = {
@@ -14,7 +17,7 @@ class Logger {
 
     #log: LogEntry[] = []
 
-    add(text: string, data: any, type: string = 'text') {
+    add(text: string, data: any, type: LogEntryDataType = 'text') {
 
         let dataToSave = data;
         if (Buffer.isBuffer(data)) {
@@ -25,7 +28,7 @@ class Logger {
             created: new Date(),
             text,
             data: dataToSave,
-            type: type as unknown as "text"|"image/png"
+            type
         });
     }
 
