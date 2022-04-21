@@ -1,6 +1,6 @@
 # Scrape API
 
-## Initialize (create) new scrape
+## Initialize (create) New Scrape
 
 `POST /scrape/init`
 ```
@@ -26,7 +26,7 @@ Unsuccessful login response:
 }
 ```
 
-## Retrieve accounts
+## Retrieve Accounts
 
 `GET /scrape/accounts?context={context}`
 
@@ -42,7 +42,7 @@ Unsuccessful login response:
 
 # Control API
 
-## List current contexts
+## List Existing Contexts
 
 `GET /control/contexts`
 
@@ -55,6 +55,25 @@ Successful response:
     scraper: string
 }
 ```
+
+## Destroy Context
+
+`DELETE /control/contexts/{context_id}`
+
+*If context is unavailable, 404 response will be sent.*
+
+
+## Trigger Expired Contexts Removal
+
+`POST /control/contexts/destroy/old`
+
+Successful response:
+```
+{
+    destroyed: number
+}
+```
+
 
 ## Retrieve target context log
 

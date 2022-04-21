@@ -1,4 +1,5 @@
 import express from 'express';
+import { destroyContext, destroyOldContexts } from '../helper';
 
 const PREFIX = '/control'
 
@@ -11,6 +12,25 @@ const addRoutes = (app: express.Application): void => {
             lastUsed: gc.lastUsed,
             scraper: gc.scraper}
         }));
+    });
+
+    app.delete(PREFIX + '/contexts/:contextId', async (req,res) => {
+
+        const context = global.availableContexts.find((elem) => elem.id === req.params.contextId)
+
+        if (!context) {
+            res.sendStatus(404);
+            return;
+        }
+
+        await destroyContext(context);
+
+        res.status(200).send();
+    });
+
+    app.post(PREFIX + '/contexts/destroy/old', async (req,res) => {
+        const numberOfDestroyed = await destroyOldContexts();
+        res.json({destroyed: numberOfDestroyed});
     });
 
     app.get(PREFIX + '/log', async (req,res) => {
