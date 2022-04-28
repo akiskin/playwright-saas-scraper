@@ -32,12 +32,15 @@ Unsuccessful login response:
 
 *If context is unavailable, 404 response will be sent.*
 
+*If context is locked by another (ongoing) request, 409 response will be sent.*
+
 ## Logout
 
 `GET /scrape/logout?context={context}`
 
 *If context is unavailable, 404 response will be sent.*
 
+*If context is locked by another (ongoing) request, 409 response will be sent.*
 
 
 # Control API

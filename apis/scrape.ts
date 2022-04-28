@@ -6,6 +6,7 @@ import { loadScraperRuntime } from '../helper'
 import { Context } from '../types';
 import Logger from '../logger';
 import { WrongCredentials } from '../errors';
+import { acquireContextLock, releaseContextLock } from '../locks';
 
 const PREFIX = '/scrape'
 
@@ -33,7 +34,8 @@ const addRoutes = (app: express.Application): void => {
             created: now,
             lastUsed: now,
             scraper: req.body.target,
-            logger: logger
+            logger: logger,
+            locked: true // Set the lock to avoid additional call to acquireContextLock()
         };
         global.availableContexts.push(processingContext);
 
@@ -46,9 +48,11 @@ const addRoutes = (app: express.Application): void => {
             if (exception instanceof WrongCredentials) {
                 loginResult = {error: 'Wrong credentials', description: exception.message};
             } else {
-                loginResult = {error: 'Unknown error'};
+                loginResult = {error: 'Unknown error', description: exception.message};
             }
         }
+
+        releaseContextLock(processingContext);
 
         res.send({
             context: processingContext.id,
@@ -67,15 +71,27 @@ const addRoutes = (app: express.Application): void => {
             return;
         }
 
+        try {
+            acquireContextLock(context);
+        } catch(exception) {
+            res.sendStatus(409);
+            return;
+        }
+
         const scraper = await loadScraperRuntime(context.scraper);
         scraper.enableLogger(context.logger);
         scraper.setContext(context);
 
         context.lastUsed = new Date();
 
-        const accounts = await scraper.extractAccounts({});
-
-        res.send(accounts);
+        try {
+            const accounts = await scraper.extractAccounts({});
+            res.send(accounts);
+        } catch(exception) {
+            res.send({error: 'Unknown error', description: exception.message});            
+        } finally {
+            releaseContextLock(context);
+        }
     });
     
 
@@ -89,15 +105,27 @@ const addRoutes = (app: express.Application): void => {
             return;
         }
 
+        try {
+            acquireContextLock(context);
+        } catch(exception) {
+            res.sendStatus(409);
+            return;
+        }
+
         const scraper = await loadScraperRuntime(context.scraper);
         scraper.enableLogger(context.logger);
         scraper.setContext(context);
 
         context.lastUsed = new Date();
 
-        await scraper.logout({});
-
-        res.send();
+        try {
+            await scraper.logout({});
+            res.send();
+        } catch(exception) {
+            res.send({error: 'Unknown error', description: exception.message});            
+        } finally {
+            releaseContextLock(context);
+        }
     });
 }
 
